@@ -1,0 +1,9 @@
+*.apk
+*.ap_
+*.jks
+*.keystore
+burp_project*
+*.burp
+.DS_Store
+__pycache__/
+*.pyc
