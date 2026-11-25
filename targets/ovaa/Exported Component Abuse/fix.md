@@ -120,7 +120,7 @@ to whichever app it's explicitly handed to via an `Intent` — never a blanket
 
 ## Verifying the fix
 
-Re-run the exploit app from [exploit/](./exploit/) against the patched APK:
+Re-run the exploit app against the patched APK:
 
 - `readVictimFile(...)` should now throw `SecurityException: Path traversal attempt blocked`
 - Direct `content://.../login_data.xml` (no traversal) should still work as
