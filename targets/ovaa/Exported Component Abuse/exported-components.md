@@ -21,5 +21,3 @@ getContentResolver().openOutputStream(uri); // write (needs file to already exis
 - Check whether the provider honors the requested `mode` or hardcodes
   `MODE_READ_WRITE`/omits `MODE_CREATE` — determines read-only vs. full write vs.
   overwrite-only impact.
-
-Full writeup: [targets/ovaa/theftoverwrite-provider.md](../targets/ovaa/theftoverwrite-provider.md)
