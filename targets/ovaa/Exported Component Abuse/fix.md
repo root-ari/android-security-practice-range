@@ -1,7 +1,6 @@
 # Fix — TheftOverwriteProvider Path Traversal
 
-Companion to [theftoverwrite-provider.md](./theftoverwrite-provider.md). This
-file is the actual patched implementation, broken into the three independent
+Thisfile is the actual patched implementation, broken into the three independent
 issues found, so each fix can be understood (and reused) on its own.
 
 ## Vulnerable original
