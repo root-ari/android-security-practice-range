@@ -1,6 +1,6 @@
 # Fix — TheftOverwriteProvider Path Traversal
 
-Thisfile is the actual patched implementation, broken into the three independent
+This file is the actual patched implementation, broken into the three independent
 issues found, so each fix can be understood (and reused) on its own.
 
 ## Vulnerable original
