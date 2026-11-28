@@ -1,12 +1,11 @@
 # Fix — TheftOverwriteProvider Path Traversal
 
-Companion to [theftoverwrite-provider.md](./theftoverwrite-provider.md). This
-file is the actual patched implementation, broken into the three independent
+This file is the actual patched implementation, broken into the three independent
 issues found, so each fix can be understood (and reused) on its own.
 
 ## Vulnerable original
 
-\`\`\`java
+```java
 public class TheftOverwriteProvider extends ContentProvider {
     @Override
     public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode) throws FileNotFoundException {
@@ -15,7 +14,7 @@ public class TheftOverwriteProvider extends ContentProvider {
     }
     // ... other CRUD methods stubbed out
 }
-\`\`\`
+```
 
 Three separate problems, each needing its own fix:
 
@@ -29,7 +28,7 @@ Three separate problems, each needing its own fix:
 
 ## Fix 1 — Canonicalize and verify containment
 
-\`\`\`java
+```java
 @Override
 public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode) throws FileNotFoundException {
     File baseDir = Environment.getExternalStorageDirectory();
@@ -50,7 +49,7 @@ public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode) thr
 
     return ParcelFileDescriptor.open(canonicalRequested, parseMode(mode));
 }
-\`\`\`
+```
 
 **Why canonicalization, not just a `..` string check:** a naive filter that just
 rejects strings containing `".."` is bypassable with percent-encoding tricks
@@ -65,7 +64,7 @@ people reintroduce the same bug while "fixing" it.
 
 ## Fix 2 — Honor the caller's requested mode
 
-\`\`\`java
+```java
 private int parseMode(String mode) {
     switch (mode) {
         case "r":   return ParcelFileDescriptor.MODE_READ_ONLY;
@@ -76,14 +75,14 @@ private int parseMode(String mode) {
         default: throw new IllegalArgumentException("Invalid mode: " + mode);
     }
 }
-\`\`\`
+```
 
 Least privilege: a caller that only declared `"r"` should never silently
 receive write access.
 
 ## Fix 3 — Require a signature-level permission
 
-\`\`\`xml
+```xml
 <!-- AndroidManifest.xml -->
 <permission android:name="oversecured.ovaa.permission.THEFT_PROVIDER"
     android:protectionLevel="signature" />
@@ -93,7 +92,7 @@ receive write access.
     android:exported="true"
     android:readPermission="oversecured.ovaa.permission.THEFT_PROVIDER"
     android:writePermission="oversecured.ovaa.permission.THEFT_PROVIDER" />
-\`\`\`
+```
 
 `protectionLevel="signature"` means only apps signed with the **same
 developer certificate** can hold this permission — a third-party attacker
@@ -105,14 +104,14 @@ all it wants and will never actually be granted it.
 OVAA's own manifest already shows the correct alternative, right next to the
 vulnerable one:
 
-\`\`\`xml
+```xml
 <provider android:name="androidx.core.content.FileProvider"
     android:authorities="oversecured.ovaa.fileprovider"
     android:exported="false"
     android:grantUriPermissions="true">
     <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/provider_paths" />
 </provider>
-\`\`\`
+```
 
 `FileProvider` + `grantUriPermissions` stays `exported="false"` and only
 grants access to **one specific, pre-declared URI at a time**, temporarily,
@@ -121,7 +120,7 @@ to whichever app it's explicitly handed to via an `Intent` — never a blanket
 
 ## Verifying the fix
 
-Re-run the exploit app from [exploit/](./exploit/) against the patched APK:
+Re-run the exploit app against the patched APK:
 
 - `readVictimFile(...)` should now throw `SecurityException: Path traversal attempt blocked`
 - Direct `content://.../login_data.xml` (no traversal) should still work as

